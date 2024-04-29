@@ -3,16 +3,32 @@ function _init()
     local var screenHeight = 128
     player = {}
     player.new = function ()
-        local self = {}
+        local self = {
+            currentSprite = 0,
+            spriteLeft = 0,
+            spriteRight = 0,
+            classes = {
+                ['wizard'] = {
+                    spriteLeft = 0,
+                    spriteRight = 1
+                }
+            }
+        }
+
+        function self.selectClass(className)
+            spr(self.classes.wizard.spriteLeft, 2, 3)
+            self.spriteLeft = self.classes[className].spriteLeft
+            self.spriteRight = self.classes[className].spriteRight
+        end
 
         function self.draw() 
-           spr(0, 2, 3)
+           spr(self.classes.wizard.spriteLeft, 2, 3)
         end
 
         return self
     end
 
-    test = player.new()
+    player = player.new()
 end
 
 function _update60()
@@ -20,6 +36,6 @@ end
 
 function _draw()
     cls()
-    rectfill(0, 0, 128, 128, 15)
-    test.draw()
+    player.selectClass("wizard")
+    player.draw()
 end
