@@ -23,15 +23,18 @@ function _init()
             self.spriteRight = self.classes[className].spriteRight
         end
 
-        function self.draw() 
-           spr(self.classes.wizard.spriteLeft, self.x, self.y)
+        function self.draw()
+            cls()
+            spr(self.currentSprite, self.x, self.y)
         end
 
         function self.move()
             if btn(0) then
                 player.x -= 1
+                self.currentSprite = self.spriteRight
             elseif btn(1) then
                 player.x += 1
+                self.currentSprite = self.spriteLeft
             elseif btn(2) then
                 player.y -= 1
             elseif btn(3) then
