@@ -7,7 +7,55 @@ function _init()
     enemies.new = function (player, projectiles)
         local self = {
             dt = 4,
+            lastEnemy = 0,
+            -- ['waves'] = {
+            --     [1] = {
+            --         sprite = 3,
+            --     }
+            -- }
         }
+
+        -- TODO - Enemies can't overlap
+        -- Need to implement bounding box here as well
+        function createEnemyCoords()
+            local padding = 5 
+            local side = rnd(4)
+            local x, y
+        
+            if side < 1 then
+                -- Above
+                x = flr(rnd(128))
+                y = -padding
+            elseif side < 2 then
+                --  Below
+                x = flr(rnd(128))
+                y = 128 + padding
+            elseif side < 3 then
+                -- Left
+                x = -padding
+                y = flr(rnd(128))
+            else
+                -- Right
+                x = 128 + padding
+                y = flr(rnd(128))
+            end
+            return x, y
+        end
+        
+
+        function self.createWave(waveNumber)
+            local id = 0
+            for i = 1, 10 do
+                local x, y = createEnemyCoords()
+                add(enemies, {
+                    x = x,
+                    y = y,
+                    sprite = 3,
+                    id = 0,
+                })
+                id += 1
+            end
+        end
 
         function self.draw()
             for en in all(enemies) do
@@ -36,8 +84,19 @@ function _init()
                     elseif player.y < en.y then
                         en.y -= 1
                     end
-                    self.dt = 4
+
+
+                    -- Allows for all the enemies
+                    -- to move with the dt time
+                    self.lastEnemy += 1
+                    local lastEnemyIndex = #enemies
+                    if self.lastEnemy == lastEnemyIndex then
+                        self.dt = 4
+                        self.lastEnemy = 0
+                    end
+
                 end
+         
             end
         end
 
@@ -175,11 +234,7 @@ function _init()
     projectiles = projectiles.new()
     enemies = enemies.new(player, projectiles)
 
-    add(enemies, {
-        x = 0,
-        y = 0,
-        sprite = 3
-    })
+    enemies.createWave()
 end
 
 function _update60()
