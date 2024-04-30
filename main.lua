@@ -4,7 +4,7 @@ function _init()
     local var offScreen = -8
 
     enemies = {}
-    enemies.new = function (player)
+    enemies.new = function (player, projectiles)
         local self = {
             dt = 4,
         }
@@ -18,6 +18,13 @@ function _init()
         function self.update()
             self.dt = self.dt - 1
             for en in all(enemies) do
+                for proj in all(projectiles) do
+                    if isDead(en.x, en.y, 8, 8, proj.x, proj.y, 8, 8) then
+                        del(enemies, en)
+                        del(projectiles, proj)
+                    end
+
+                end
                 if self.dt <= 0 then
                     if player.x > en.x then
                         en.x += 1
@@ -32,6 +39,21 @@ function _init()
                     self.dt = 4
                 end
             end
+        end
+
+        function isDead(x1, y1, w1, h1, x2, y2, w2, h2)
+            local hit = false
+        
+            local xs = w1 * 0.5 + w2 * 0.5
+            local ys = h1 * 0.5 + h2 * 0.5
+        
+            local xd = abs((x1 + (w1 / 2)) - (x2 +(w2 / 2)))
+            local yd = abs((y1 + (h1 / 2)) - (y2 +(h2 / 2)))
+        
+            if xd < xs and yd < ys then
+                hit = true
+            end
+            return hit
         end
 
         return self
@@ -151,11 +173,19 @@ function _init()
 
     player = player.new()
     projectiles = projectiles.new()
+    enemies = enemies.new(player, projectiles)
+
+    add(enemies, {
+        x = 0,
+        y = 0,
+        sprite = 3
+    })
 end
 
 function _update60()
     player.move()
     projectiles.update()
+    enemies.update()
 end
 
 function _draw()
@@ -164,4 +194,5 @@ function _draw()
     player.draw()
     player.attack()
     projectiles.draw()
+    enemies.draw()
 end
