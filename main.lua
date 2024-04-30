@@ -46,8 +46,8 @@ function _init()
     player = {}
     player.new = function ()
         local self = {
-            x = 0,
-            y = 0,
+            x = 64,
+            y = 64,
             facing = 'right',
             currentSprite = 0,
             spriteLeft = 0,
@@ -88,28 +88,26 @@ function _init()
         end
     
         function self.selectClass(className)
-            spr(self.classes.wizard.spriteLeft, self.x, self.y)
             self.spriteLeft = self.classes[className].spriteLeft
             self.spriteRight = self.classes[className].spriteRight
         end
 
         function self.draw()
-            cls()
             spr(self.currentSprite, self.x, self.y)
         end
 
         function self.move()
-            if btn(0) then
+            if btn(0) and player.x > 0 then
                 player.x -= 1
                 self.currentSprite = self.spriteLeft
                 self.facing = 'left'
-            elseif btn(1) then
+            elseif btn(1) and player.x < screenWidth - 8 then
                 player.x += 1
                 self.currentSprite = self.spriteRight
                 self.facing = 'right'
-            elseif btn(2) then
+            elseif btn(2) and player.y > 0 then
                 player.y -= 1
-            elseif btn(3) then
+            elseif btn(3) and player.y < screenHeight - 8 then
                 player.y += 1
             end
         end
@@ -127,7 +125,7 @@ function _update60()
 end
 
 function _draw()
-    cls()
+    cls(1)
     player.selectClass("wizard")
     player.draw()
     player.attack()
