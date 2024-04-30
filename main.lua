@@ -3,6 +3,40 @@ function _init()
     local var screenHeight = 128
     local var offScreen = -8
 
+    enemies = {}
+    enemies.new = function (player)
+        local self = {
+            dt = 4,
+        }
+
+        function self.draw()
+            for en in all(enemies) do
+                spr(en.sprite, en.x, en.y)
+            end
+        end
+
+        function self.update()
+            self.dt = self.dt - 1
+            for en in all(enemies) do
+                if self.dt <= 0 then
+                    if player.x > en.x then
+                        en.x += 1
+                    elseif player.x < en.x then
+                        en.x -= 1
+                    end
+                    if player.y > en.y then
+                        en.y += 1
+                    elseif player.y < en.y then
+                        en.y -= 1
+                    end
+                    self.dt = 4
+                end
+            end
+        end
+
+        return self
+    end
+
     projectiles = {}
     projectiles.new = function()
         local self = {}
