@@ -15,10 +15,8 @@ function _init()
             -- }
         }
 
-        -- TODO - Enemies can't overlap
-        -- Need to implement bounding box here as well
         function createEnemyCoords()
-            local padding = 5 
+            local padding = 12
             local side = rnd(4)
             local x, y
         
@@ -53,7 +51,6 @@ function _init()
                     sprite = 3,
                     id = 0,
                 })
-                id += 1
             end
         end
 
@@ -65,40 +62,54 @@ function _init()
 
         function self.update()
             self.dt = self.dt - 1
-            for en in all(enemies) do
-                for proj in all(projectiles) do
+            for i, en in ipairs(enemies) do
+                for _, proj in ipairs(projectiles) do
                     if isDead(en.x, en.y, 8, 8, proj.x, proj.y, 8, 8) then
                         del(enemies, en)
                         del(projectiles, proj)
+                        break
                     end
-
                 end
+
                 if self.dt <= 0 then
+                    local moveX, moveY = 0, 0
                     if player.x - 8 > en.x then
-                        en.x += 1
+                        moveX = 1
                     elseif player.x + 8 < en.x then
-                        en.x -= 1
+                        moveX = -1
                     end
                     if player.y - 8 > en.y then
-                        en.y += 1
+                        moveY = 1
                     elseif player.y + 8 < en.y then
-                        en.y -= 1
+                        moveY = -1
                     end
 
+                    -- Check for collision with other enemies
+                    local newX, newY = en.x + moveX, en.y + moveY
+                    local collision = false
+                    for j, otherEn in ipairs(enemies) do
+                        if j ~= i then -- Skip self
+                            local distance = sqrt((newX - otherEn.x)^2 + (newY - otherEn.y)^2)
+                            if distance < 8 then
+                                collision = true
+                                break
+                            end
+                        end
+                    end
 
-                    -- Allows for all the enemies
-                    -- to move with the dt time
-                    self.lastEnemy += 1
-                    local lastEnemyIndex = #enemies
-                    if self.lastEnemy == lastEnemyIndex then
+                    if not collision then
+                        en.x = en.x + moveX
+                        en.y = en.y + moveY
+                    end
+
+                    -- Reset dt when processing the last enemy
+                    if i == #enemies then
                         self.dt = 4
-                        self.lastEnemy = 0
                     end
-
                 end
-         
             end
         end
+
 
         function isDead(x1, y1, w1, h1, x2, y2, w2, h2)
             local hit = false
