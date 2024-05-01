@@ -1,3 +1,20 @@
+local utils = {}
+
+function utils.delete(table, item)
+    if item.x > screenWidth then
+        del(table, item)
+    end
+    if item.x < offScreen then
+        del(table, item)
+    end
+    if item.y > screenHeight then
+        del(table, item)
+    end
+    if item.y < offScreen then
+        del(table, item)
+    end
+end
+
 function _init()
     local var screenWidth = 128
     local var screenHeight = 128
@@ -161,24 +178,10 @@ function _init()
                 if proj.dir == 'right' then
                     proj.x += proj.speed
                 end
-                delete(proj)
+                utils.delete(projectiles, proj)
             end
         end
 
-        function delete(proj)
-            if proj.x > screenWidth then
-                del(projectiles, proj)
-            end
-            if proj.x < offScreen then
-                del(projectiles, proj)
-            end
-            if proj.y > screenHeight then
-                del(projectiles, proj)
-            end
-            if proj.y < offScreen then
-                del(projectiles, proj)
-            end
-        end
 
         return self
     end
