@@ -191,6 +191,7 @@ function _init()
         local self = {
             x = 64,
             y = 64,
+            timer = 0,
             facing = 'right',
             currentSprite = 0,
             spriteLeft = 0,
@@ -210,23 +211,27 @@ function _init()
         }
 
         function self.attack()
-            if self.facing == 'left' and btnp(5) then
-                add(projectiles, {
-                    x = self.x - 8,
-                    y = self.y,
-                    speed = 1,
-                    dir = 'left',
-                    sprite = self.attacks.fireball.sprite
-                })
-            end
-            if self.facing == 'right' and btnp(5) then
-                add(projectiles, {
-                    x = self.x + 8,
-                    y = self.y,
-                    speed = 1,
-                    dir = 'right',
-                    sprite = self.attacks.fireball.sprite
-                })
+            self.timer += 1
+            if self.timer == 60 then
+                if self.facing == 'left' then
+                    add(projectiles, {
+                        x = self.x - 8,
+                        y = self.y,
+                        speed = 1,
+                        dir = 'left',
+                        sprite = self.attacks.fireball.sprite
+                    })
+                end
+                if self.facing == 'right' then
+                    add(projectiles, {
+                        x = self.x + 8,
+                        y = self.y,
+                        speed = 1,
+                        dir = 'right',
+                        sprite = self.attacks.fireball.sprite
+                    })
+                end
+                self.timer = 0
             end
         end
     
