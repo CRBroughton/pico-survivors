@@ -74,14 +74,14 @@ function _init()
 
                 end
                 if self.dt <= 0 then
-                    if player.x > en.x then
+                    if player.x - 8 > en.x then
                         en.x += 1
-                    elseif player.x < en.x then
+                    elseif player.x + 8 < en.x then
                         en.x -= 1
                     end
-                    if player.y > en.y then
+                    if player.y - 8 > en.y then
                         en.y += 1
-                    elseif player.y < en.y then
+                    elseif player.y + 8 < en.y then
                         en.y -= 1
                     end
 
