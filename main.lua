@@ -129,18 +129,18 @@ function _init()
                                 local moveY = overlap * (dy / d)
                                 newX = newX + moveX
                                 newY = newY + moveY
-                                otherEn.x = otherEn.x - moveX
-                                otherEn.y = otherEn.y - moveY
-                                collision = true
+                                -- otherEn.x = otherEn.x - moveX
+                                -- otherEn.y = otherEn.y - moveY
+                                -- collision = true
                                 break
                             end
                         end
                     end
         
-                    if not collision then
+                    -- if not collision then
                         en.x = newX
                         en.y = newY
-                    end
+                    -- end
         
                     -- Reset dt when processing the last enemy
                     if i == #enemies then
