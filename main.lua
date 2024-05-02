@@ -16,8 +16,8 @@ function utils.delete(table, item)
 end
 
 function utils.updateCamera(player)
-    camX = player.x - 60
-	camY = player.y - 60
+    camX = player.x + 8 - 60
+	camY = player.y + 8 - 60
 
 	camX = mid(0, camX, 128)
 	camY = mid(0, camY, 128)
@@ -29,6 +29,36 @@ function _init()
     local var screenWidth = 256 - 8
     local var screenHeight = 256 - 8
     local var offScreen = -8
+
+    ui = {} 
+    ui.new = function(player)
+        local self = {}
+
+        function self.drawPlayerHealth()
+            local uiX = player.x + 12 - 63
+            local uiY = player.y + 12 - 63
+
+            if player.x >= 180 then
+                uiX = 129
+            end
+
+            if player.x <= 53 then
+                uiX = 2
+            end
+
+            if player.y <= 53 then
+                uiY = 2
+            end
+
+            if player.y >= 180 then
+                uiY = 129
+            end
+
+            print("health:" .. player.health, uiX, uiY, 2)
+        end
+
+        return self
+    end
 
     enemies = {}
     enemies.new = function (player, projectiles)
@@ -205,6 +235,7 @@ function _init()
     player = {}
     player.new = function ()
         local self = {
+            health = 50,
             x = 128,
             y = 128,
             timer = 0,
@@ -225,6 +256,12 @@ function _init()
                 }
             }
         }
+
+        function self.decreaseHealth()
+            if self.health > 0 then
+                self.health -= 1
+            end
+        end
 
         function self.attack()
             self.timer += 1
@@ -284,6 +321,7 @@ function _init()
     enemies = enemies.new(player, projectiles)
 
     enemies.createWave()
+    ui = ui.new(player)
 end
 
 function _update60()
@@ -301,4 +339,5 @@ function _draw()
     player.attack()
     projectiles.draw()
     enemies.draw()
+    ui.drawPlayerHealth()
 end
