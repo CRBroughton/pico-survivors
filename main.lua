@@ -15,6 +15,16 @@ function utils.delete(table, item)
     end
 end
 
+function utils.updateCamera(player)
+    camX = player.x - 60
+	camY = player.y - 60
+
+	camX = mid(0, camX, 896)
+	camY = mid(0, camY, 128)
+	
+	camera(camX,camY)
+end
+
 function _init()
     local var screenWidth = 128
     local var screenHeight = 128
@@ -186,6 +196,14 @@ function _init()
         return self
     end
 
+    abilities = {
+        ['arrow'] = {
+            unlocked = false,
+            sprite = 5,
+            speed = 1,
+        }
+    }
+
     player = {}
     player.new = function ()
         local self = {
@@ -279,6 +297,7 @@ end
 function _draw()
     cls(1)
     player.selectClass("wizard")
+    utils.updateCamera(player)
     player.draw()
     player.attack()
     projectiles.draw()
