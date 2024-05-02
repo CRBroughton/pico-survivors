@@ -87,6 +87,30 @@ function _init()
             end
         end
 
+    function checkForEnemyCollision(en, i, moveX, moveY)
+        local newX, newY = en.x + moveX, en.y + moveY
+        local collision = false
+        for j, otherEn in ipairs(enemies) do
+            if j ~= i then -- Skip self
+                local distance = sqrt((newX - otherEn.x)^2 + (newY - otherEn.y)^2)
+                if distance < 8 then
+                    -- Handle collision by moving both enemies away from each other
+                    local dx = newX - otherEn.x
+                    local dy = newY - otherEn.y
+                    local d = sqrt(dx * dx + dy * dy)
+                    if d == 0 then d = 0.00001 end -- Avoid division by zero
+                    local overlap = 8 - d
+                    local moveX = overlap * (dx / d)
+                    local moveY = overlap * (dy / d)
+                    newX = newX + moveX
+                    newY = newY + moveY
+                    break
+                end
+            end
+        end
+        return newX, newY
+    end
+
         function self.update()
             self.dt = self.dt - 1
             for i, en in ipairs(enemies) do
@@ -111,36 +135,10 @@ function _init()
                         moveY = -1
                     end
         
-                    -- Check for collision with other enemies
-                    -- Need to refactor this into own function
-                    local newX, newY = en.x + moveX, en.y + moveY
-                    local collision = false
-                    for j, otherEn in ipairs(enemies) do
-                        if j ~= i then -- Skip self
-                            local distance = sqrt((newX - otherEn.x)^2 + (newY - otherEn.y)^2)
-                            if distance < 8 then
-                                -- Handle collision by moving both enemies away from each other
-                                local dx = newX - otherEn.x
-                                local dy = newY - otherEn.y
-                                local d = sqrt(dx * dx + dy * dy)
-                                if d == 0 then d = 0.00001 end -- Avoid division by zero
-                                local overlap = 8 - d
-                                local moveX = overlap * (dx / d)
-                                local moveY = overlap * (dy / d)
-                                newX = newX + moveX
-                                newY = newY + moveY
-                                -- otherEn.x = otherEn.x - moveX
-                                -- otherEn.y = otherEn.y - moveY
-                                -- collision = true
-                                break
-                            end
-                        end
-                    end
+                    newX, newY = checkForEnemyCollision(en, i, moveX, moveY)
         
-                    -- if not collision then
-                        en.x = newX
-                        en.y = newY
-                    -- end
+                    en.x = newX
+                    en.y = newY
         
                     -- Reset dt when processing the last enemy
                     if i == #enemies then
