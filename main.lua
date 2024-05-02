@@ -19,15 +19,15 @@ function utils.updateCamera(player)
     camX = player.x - 60
 	camY = player.y - 60
 
-	camX = mid(0, camX, 896)
+	camX = mid(0, camX, 128)
 	camY = mid(0, camY, 128)
 	
 	camera(camX,camY)
 end
 
 function _init()
-    local var screenWidth = 128
-    local var screenHeight = 128
+    local var screenWidth = 256 - 8
+    local var screenHeight = 256 - 8
     local var offScreen = -8
 
     enemies = {}
@@ -207,8 +207,8 @@ function _init()
     player = {}
     player.new = function ()
         local self = {
-            x = 64,
-            y = 64,
+            x = 128,
+            y = 128,
             timer = 0,
             facing = 'right',
             currentSprite = 0,
@@ -230,7 +230,7 @@ function _init()
 
         function self.attack()
             self.timer += 1
-            if self.timer == 60 then
+            if self.timer == 1 * 60 then
                 if self.facing == 'left' then
                     add(projectiles, {
                         x = self.x - 8,
@@ -263,7 +263,7 @@ function _init()
         end
 
         function self.move()
-            if btn(0) and player.x > 0 then
+            if btn(0) and player.x > 8 then
                 player.x -= 1
                 self.currentSprite = self.spriteLeft
                 self.facing = 'left'
@@ -271,7 +271,7 @@ function _init()
                 player.x += 1
                 self.currentSprite = self.spriteRight
                 self.facing = 'right'
-            elseif btn(2) and player.y > 0 then
+            elseif btn(2) and player.y > 8 then
                 player.y -= 1
             elseif btn(3) and player.y < screenHeight - 8 then
                 player.y += 1
@@ -296,6 +296,7 @@ end
 
 function _draw()
     cls(1)
+    map(0,0,0,0,128,32)
     player.selectClass("wizard")
     utils.updateCamera(player)
     player.draw()
