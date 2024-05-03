@@ -64,7 +64,10 @@ function _init()
     enemies.new = function (player, projectiles)
         local self = {
             dt = 4,
-            lastEnemy = 0,
+            tick = 0,
+            step = 8,
+            frame = 1,
+            sprites = { 52, 52 }
             -- ['waves'] = {
             --     [1] = {
             --         sprite = 3,
@@ -97,6 +100,12 @@ function _init()
             return x, y
         end
         
+        function self.animate()
+            self.tick = (self.tick + 1) % self.step
+            if self.tick == 0 then
+                self.frame = self.frame %#self.sprites + 1
+            end
+        end
 
         function self.createWave(waveNumber)
             local id = 0
@@ -105,7 +114,6 @@ function _init()
                 add(enemies, {
                     x = x,
                     y = y,
-                    sprite = 3,
                     id = 0,
                 })
             end
@@ -113,7 +121,9 @@ function _init()
 
         function self.draw()
             for en in all(enemies) do
-                spr(en.sprite, en.x, en.y)
+                pal(14, 0)
+                spr(self.sprites[self.frame], en.x, en.y)
+                pal()
             end
         end
 
@@ -328,6 +338,7 @@ function _update60()
     player.move()
     projectiles.update()
     enemies.update()
+    enemies.animate()
 end
 
 function _draw()
