@@ -225,16 +225,21 @@ function _init()
 
         function self.draw()
             for proj in all(projectiles) do
-                spr(proj.sprite, proj.x, proj.y)
+                if proj.facing == 'left' then
+                    spr(proj.sprite, proj.x, proj.y, 1, 1, true)
+                end
+                if proj.facing == 'right' then
+                    spr(proj.sprite, proj.x, proj.y, 1, 1)
+                end
             end
         end
 
         function self.update()
             for proj in all(projectiles) do
-                if proj.dir == 'left' then
+                if proj.facing == 'left' then
                     proj.x -= proj.speed
                 end
-                if proj.dir == 'right' then
+                if proj.facing == 'right' then
                     proj.x += proj.speed
                 end
                 utils.delete(projectiles, proj)
@@ -292,7 +297,7 @@ function _init()
                         x = self.x - 8,
                         y = self.y,
                         speed = 1,
-                        dir = 'left',
+                        facing = 'left',
                         sprite = self.attacks.fireball.sprite
                     })
                 end
@@ -301,7 +306,7 @@ function _init()
                         x = self.x + 8,
                         y = self.y,
                         speed = 1,
-                        dir = 'right',
+                        facing = 'right',
                         sprite = self.attacks.fireball.sprite
                     })
                 end
