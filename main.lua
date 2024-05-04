@@ -55,6 +55,8 @@ function _init()
             end
 
             print("health:" .. player.health, uiX, uiY, 2)
+            print("count:" .. player.enemyCount, uiX, uiY + 6, 2)
+
         end
 
         return self
@@ -105,15 +107,33 @@ function _init()
             end
         end
 
+        function tablelength(T)
+            local count = 0
+            for _ in pairs(T) do count = count + 1 end
+            return count
+          end
+
+        -- need to figure out the conditions under which enemies spawn
         function self.createWave(waveNumber)
-            local id = 0
-            for i = 1, 10 do
+            if tablelength(enemies) < 20 then
                 local x, y = createEnemyCoords()
                 add(enemies, {
                     x = x,
                     y = y,
-                    id = 0,
                     sprites = { 50, 51 },
+                    tick = 0,
+                    step = 8,
+                    frame = 1,
+                    facing = 'left'
+                })
+            end
+            local a = time()
+            if a > 10 and tablelength(enemies) >= 15 and tablelength(enemies) <= 20 then
+                local x, y = createEnemyCoords()
+                add(enemies, {
+                    x = x,
+                    y = y,
+                    sprites = { 52, 53 },
                     tick = 0,
                     step = 8,
                     frame = 1,
@@ -216,6 +236,7 @@ function _init()
         
             if xd < xs and yd < ys then
                 hit = true
+                player.incrementEnemyCount()
             end
             return hit
         end
@@ -265,6 +286,7 @@ function _init()
     player = {}
     player.new = function ()
         local self = {
+            enemyCount = 0,
             health = 50,
             x = 128,
             y = 128,
@@ -286,6 +308,10 @@ function _init()
                 }
             }
         }
+
+        function self.incrementEnemyCount()
+            self.enemyCount += 1
+        end
 
         function self.decreaseHealth()
             if self.health > 0 then
@@ -350,7 +376,6 @@ function _init()
     projectiles = projectiles.new()
     enemies = enemies.new(player, projectiles)
 
-    enemies.createWave()
     ui = ui.new(player)
 end
 
@@ -358,6 +383,7 @@ function _update60()
     player.move()
     projectiles.update()
     enemies.update()
+    enemies.createWave()
 end
 
 function _draw()
