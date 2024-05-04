@@ -64,10 +64,6 @@ function _init()
     enemies.new = function (player, projectiles)
         local self = {
             dt = 4,
-            tick = 0,
-            step = 8,
-            frame = 1,
-            sprites = { 50, 51 }
             -- ['waves'] = {
             --     [1] = {
             --         sprite = 3,
@@ -101,9 +97,11 @@ function _init()
         end
         
         function self.animate()
-            self.tick = (self.tick + 1) % self.step
-            if self.tick == 0 then
-                self.frame = self.frame %#self.sprites + 1
+            for en in all(enemies) do
+                en.tick = (en.tick + 1) % en.step
+                if en.tick == 0 then
+                    en.frame = en.frame %#en.sprites + 1
+                end
             end
         end
 
@@ -115,6 +113,10 @@ function _init()
                     x = x,
                     y = y,
                     id = 0,
+                    sprites = { 50, 51 },
+                    tick = 0,
+                    step = 8,
+                    frame = 1,
                     facing = 'left'
                 })
             end
@@ -124,15 +126,16 @@ function _init()
             for en in all(enemies) do
                 pal(14, 0)
                 if en.facing == 'left' then
-                    spr(self.sprites[self.frame], en.x, en.y, 1, 1, true)
+                    spr(en.sprites[en.frame], en.x, en.y, 1, 1, true)
                 end
 
                 if en.facing == 'right' then
-                    spr(self.sprites[self.frame], en.x, en.y, 1, 1)
+                    spr(en.sprites[en.frame], en.x, en.y, 1, 1)
                 end
                 pal()
             end
         end
+
 
     function checkForEnemyCollision(en, i, moveX, moveY)
         local newX, newY = en.x + moveX, en.y + moveY
@@ -160,6 +163,7 @@ function _init()
 
         function self.update()
             self.dt = self.dt - 1
+            self.animate()
             for i, en in ipairs(enemies) do
                 for _, proj in ipairs(projectiles) do
                     if isDead(en.x, en.y, 8, 8, proj.x, proj.y, 8, 8) then
@@ -354,7 +358,6 @@ function _update60()
     player.move()
     projectiles.update()
     enemies.update()
-    enemies.animate()
 end
 
 function _draw()
