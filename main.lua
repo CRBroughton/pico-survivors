@@ -185,8 +185,15 @@ function _init()
             self.dt = self.dt - 1
             self.animate()
             for i, en in ipairs(enemies) do
+                -- TODO - We need to create a timer to ensure
+                -- Health doesnt vanish too quickly
+                if checkOverlap(en.x, en.y, 8, 8, player.x, player.y, 8, 8) then
+                   player.decreaseHealth()
+                end
                 for _, proj in ipairs(projectiles) do
-                    if isDead(en.x, en.y, 8, 8, proj.x, proj.y, 8, 8) then
+                    if checkOverlap(en.x, en.y, 8, 8, proj.x, proj.y, 8, 8,
+                        player.incrementEnemyCount
+                    ) then
                         del(enemies, en)
                         del(projectiles, proj)
                         break
@@ -223,9 +230,7 @@ function _init()
             end
         end
         
-
-
-        function isDead(x1, y1, w1, h1, x2, y2, w2, h2)
+        function checkOverlap(x1, y1, w1, h1, x2, y2, w2, h2, callback)
             local hit = false
         
             local xs = w1 * 0.5 + w2 * 0.5
@@ -236,7 +241,9 @@ function _init()
         
             if xd < xs and yd < ys then
                 hit = true
-                player.incrementEnemyCount()
+                if (callback) then
+                    callback()
+                end
             end
             return hit
         end
