@@ -67,7 +67,7 @@ function _init()
             tick = 0,
             step = 8,
             frame = 1,
-            sprites = { 52, 52 }
+            sprites = { 50, 51 }
             -- ['waves'] = {
             --     [1] = {
             --         sprite = 3,
@@ -115,6 +115,7 @@ function _init()
                     x = x,
                     y = y,
                     id = 0,
+                    facing = 'left'
                 })
             end
         end
@@ -122,7 +123,13 @@ function _init()
         function self.draw()
             for en in all(enemies) do
                 pal(14, 0)
-                spr(self.sprites[self.frame], en.x, en.y)
+                if en.facing == 'left' then
+                    spr(self.sprites[self.frame], en.x, en.y, 1, 1, true)
+                end
+
+                if en.facing == 'right' then
+                    spr(self.sprites[self.frame], en.x, en.y, 1, 1)
+                end
                 pal()
             end
         end
@@ -166,7 +173,11 @@ function _init()
                     local moveX, moveY = 0, 0
                     if player.x - 8 > en.x then
                         moveX = 1
+                        en.facing = 'right'
+                        -- Set the enemy facing to 'right'
                     elseif player.x + 8 < en.x then
+                        -- Set the enemy facing to 'left'
+                        en.facing = 'left'
                         moveX = -1
                     end
                     if player.y - 8 > en.y then
